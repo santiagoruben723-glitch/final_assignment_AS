@@ -17,4 +17,3 @@ Exercício 2:
 4. Entregue o código num repositório github
 
 
-Traduzido com a versão gratuita do tradutor - DeepL.com
