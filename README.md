@@ -1,5 +1,8 @@
 *Final assignment*
 
+Grupo de 3 pessoas
+
+Data de entrega - 9 de janeiro de 2026
 Exercise 1
 1. Fork this repository
 2. in the new repositry, make sure that:
