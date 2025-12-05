@@ -20,7 +20,7 @@ resource "azurerm_resource_group" "rg" {
 # 2. Virtual Network and Subnet
 resource "azurerm_virtual_network" "vnet" {
   name                = "my-vnet"
-  address_space       = ["10.0.0.0/16"]
+  address_space       = ["10.0.0.0/16"] [cite: 4]
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 }
@@ -35,7 +35,7 @@ resource "azurerm_subnet" "subnet" {
 # 3. Public IP Address
 resource "azurerm_public_ip" "publicip" {
   name                = "my-vm-publicip"
-  location            = azurerm_resource_group.rg.location
+  location            = azurerm_resource_group.rg.location [cite: 5]
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Static"
   sku                 = "Standard"
@@ -48,17 +48,17 @@ resource "azurerm_network_interface" "nic" {
   resource_group_name = azurerm_resource_group.rg.name
 
   ip_configuration {
-    name                          = "internal"
+    name                          = "internal" [cite: 6]
     subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.publicip.id
   }
 }
 
-# 5. Network Security Group (to allow SSH)
+# 5. Network Security Group (to allow SSH, HTTP, and DHCP)
 resource "azurerm_network_security_group" "nsg" {
   name                = "my-vm-nsg"
-  location            = azurerm_resource_group.rg.location
+  location            = azurerm_resource_group.rg.location [cite: 7]
   resource_group_name = azurerm_resource_group.rg.name
 }
 
@@ -66,11 +66,11 @@ resource "azurerm_network_security_rule" "ssh_rule" {
   name                        = "SSH_Access"
   priority                    = 100
   direction                   = "Inbound"
-  access                      = "Allow"
+  access                      = "Allow" [cite: 8]
   protocol                    = "Tcp"
   source_port_range           = "*"
   destination_port_range      = "22" # Standard SSH port
-  source_address_prefix       = "*"  # Allow from any IP (Be cautious! Restrict this in production)
+  source_address_prefix       = "*"  # Allow from any IP (Be cautious! Restrict this in production) [cite: 9]
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_network_security_group.nsg.resource_group_name
   network_security_group_name = azurerm_network_security_group.nsg.name
@@ -80,15 +80,31 @@ resource "azurerm_network_security_rule" "http_rule" {
   name                        = "HTTP_Access"
   priority                    = 110
   direction                   = "Inbound"
-  access                      = "Allow"
+  access                      = "Allow" [cite: 10]
   protocol                    = "Tcp"
   source_port_range           = "*"
   destination_port_range      = "80"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_network_security_group.nsg.resource_group_name
+  network_security_group_name = azurerm_network_security_group.nsg.name [cite: 11]
+}
+
+# NOVA REGRA PARA DHCP (EXERCÍCIO 2)
+resource "azurerm_network_security_rule" "dhcp_rule" {
+  name                        = "DHCP_Access"
+  priority                    = 120 # Prioridade para não colidir
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Udp" # DHCP usa UDP
+  source_port_range           = "*"
+  destination_port_range      = "67,68" # Portas padrões do DHCP
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_network_security_group.nsg.resource_group_name
   network_security_group_name = azurerm_network_security_group.nsg.name
 }
+
 
 resource "azurerm_network_interface_security_group_association" "nic_nsg_association" {
   network_interface_id      = azurerm_network_interface.nic.id
@@ -101,11 +117,14 @@ resource "azurerm_linux_virtual_machine" "vm" {
   name                            = "my-ubuntu-vm"
   location                        = azurerm_resource_group.rg.location
   resource_group_name             = azurerm_resource_group.rg.name
-  size                            = "Standard_B2S" # Basic VM size
+  size                            = "Standard_B2S" # Basic VM size [cite: 12]
   network_interface_ids           = [azurerm_network_interface.nic.id]
   disable_password_authentication = false
-  admin_username                  = "azureuser"
-  admin_password                  = "P@sswOrd12345" # **Change this to a strong password and use a variable!**
+  
+  # *** REFERÊNCIA A VARIÁVEIS PARA SEGURANÇA (EXERCÍCIO 1.2b & 2.3) ***
+  admin_username                  = var.vm_admin_username
+  admin_password                  = var.vm_admin_password
+  # *** FIM DA REFERÊNCIA A VARIÁVEIS ***
 
   os_disk {
     caching              = "ReadWrite"
