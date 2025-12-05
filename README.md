@@ -1,17 +1,20 @@
-*Final assignment*
+*Trabalho final*
 
 Grupo de 3 pessoas
 
 Data de entrega - 9 de janeiro de 2026
-Exercise 1
-1. Fork this repository
-2. in the new repositry, make sure that:
-   a) a proper index.html file is served by NGINX
-   b) make sure passwords are not shown in the Terraform and Ansbile files (they are not visible in the repository)
+Exercício 1
+1. Faça um fork deste repositório
+2. No novo repositório, certifique-se de que:
+   a) um ficheiro index.html adequado é servido pelo NGINX
+   b) as palavras-passe não são mostradas nos ficheiros Terraform e Ansbile (elas não são visíveis no repositório)
   
 
-Exercise 2:
-1. Create a Linux machine in Azure that will play a DHCP role
-2. use Terraform and Ansible (zero manual configuration)
-3. make sure that no passwords are stored in scripts
-4. delivery the code in a github repo
+Exercício 2:
+1. Crie uma máquina Linux no Azure que desempenhará uma função DHCP
+2. Use o Terraform e o Ansible (sem configuração manual)
+3. Certifique-se de que nenhuma palavra-passe é armazenada nos scripts
+4. Entregue o código num repositório github
+
+
+Traduzido com a versão gratuita do tradutor - DeepL.com
